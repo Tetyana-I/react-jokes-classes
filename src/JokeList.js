@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Joke from "./Joke";
+import JokeClassBased from "./JokeClassBased";
 import "./JokeList.css";
 
 function JokeList({ numJokesToGet = 10 }) {
@@ -31,11 +31,9 @@ function JokeList({ numJokesToGet = 10 }) {
         console.log(e);
       }
     }
-
+  /* empty joke list and then call getJokes */
     if (jokes.length === 0) getJokes();
   }, [jokes, numJokesToGet]);
-
-  /* empty joke list and then call getJokes */
 
   function generateNewJokes() {
     setJokes([]);
@@ -61,7 +59,7 @@ function JokeList({ numJokesToGet = 10 }) {
         </button>
   
         {sortedJokes.map(j => (
-          <Joke text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={vote} />
+          <JokeClassBased text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={vote} />
         ))}
       </div>
     );

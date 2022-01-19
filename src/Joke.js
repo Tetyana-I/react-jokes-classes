@@ -1,6 +1,8 @@
 import React from "react";
 import "./Joke.css";
 
+// original function component to refactor:
+
 function Joke({ vote, votes, text, id }) {
   const upVote = () => vote(id, +1);
   const downVote = () => vote(id, -1);
