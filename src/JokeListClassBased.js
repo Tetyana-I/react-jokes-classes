@@ -1,72 +1,82 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import JokeClassBased from "./JokeClassBased";
 import "./JokeList.css";
 
-function JokeListClassBased({ numJokesToGet = 10 }) {
-  const [jokes, setJokes] = useState([]);
+class JokeListClassBased extends React.Component {
+    constructor() {
+        super();
+        this.state = { jokes: [] };
+        this.generateNewJokes = this.generateNewJokes.bind(this);
+        this.getJokes = this.getJokes.bind(this);
+        this.vote = this.vote.bind(this);
+        this.numJokesToGet = 10;
+    }
 
   /* get jokes if there are no jokes */
-
-  useEffect(function() {
-    async function getJokes() {
-      let j = [...jokes];
-      let seenJokes = new Set();
-      try {
-        while (j.length < numJokesToGet) {
-          let res = await axios.get("https://icanhazdadjoke.com", {
+    getJokes = async function() {
+        let j = [...this.state.jokes];
+        let seenJokes = new Set();
+        try {
+        while (j.length < this.numJokesToGet) {
+            let res = await axios.get("https://icanhazdadjoke.com", {
             headers: { Accept: "application/json" }
-          });
-          let { status, ...jokeObj } = res.data;
-  
-          if (!seenJokes.has(jokeObj.id)) {
+            });
+            let { status, ...jokeObj } = res.data;
+
+            if (!seenJokes.has(jokeObj.id)) {
             seenJokes.add(jokeObj.id);
             j.push({ ...jokeObj, votes: 0 });
-          } else {
+            } else {
             console.error("duplicate found!");
-          }
+            }
         }
-        setJokes(j);
-      } catch (e) {
+        this.setState({jokes: j});
+        } catch (e) {
         console.log(e);
-      }
+        }
     }
-  /* empty joke list and then call getJokes */
-    if (jokes.length === 0) getJokes();
-  }, [jokes, numJokesToGet]);
 
-  function generateNewJokes() {
-    setJokes([]);
-  }
+    componentDidMount() {
+        /* empty joke list and then call getJokes */
+        if (this.state.jokes.length === 0) this.getJokes();    
+    }
 
-  /* change vote for this id by delta (+1 or -1) */
+    componentDidUpdate() {
+        /* empty joke list and then call getJokes */
+        if (this.state.jokes.length === 0) this.getJokes();    
+    }
 
-  function vote(id, delta) {
-    setJokes(allJokes =>
-      allJokes.map(j => (j.id === id ? { ...j, votes: j.votes + delta } : j))
-    );
-  }
+    generateNewJokes() {
+        this.setState( {jokes: []});
+        console.log("Generate New Joke function!");
+    }
 
-  /* render: either loading spinner or list of sorted jokes. */
+    /* change vote for this id by delta (+1 or -1) */
+    vote(id, delta) {
+        this.setState(allJokes =>
+        allJokes.map(j => (j.id === id ? { ...j, votes: j.votes + delta } : j))
+        );
+    }
 
-  if (jokes.length) {
-    let sortedJokes = [...jokes].sort((a, b) => b.votes - a.votes);
-  
-    return (
-      <div className="JokeList">
-        <button className="JokeList-getmore" onClick={generateNewJokes}>
-          Get New Jokes
-        </button>
-  
-        {sortedJokes.map(j => (
-          <JokeClassBased text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={vote} />
-        ))}
-      </div>
-    );
-  }
-
-  return null;
-
+    render() {
+        /* render: either loading spinner or list of sorted jokes. */
+        if (this.state.jokes.length) {
+            let sortedJokes = [...this.state.jokes].sort((a, b) => b.votes - a.votes);        
+            return (
+                <div className="JokeList">
+                    <button className="JokeList-getmore" onClick={this.generateNewJokes}>
+                    Get New Jokes
+                    </button>
+            
+                    {sortedJokes.map(j => (
+                    <JokeClassBased text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={this.vote} />
+                    ))}
+                </div>
+            );
+        }
+        return null;        
+    }
 }
 
 export default JokeListClassBased;
