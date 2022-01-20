@@ -42,9 +42,11 @@ function JokeList({ numJokesToGet = 10 }) {
   /* change vote for this id by delta (+1 or -1) */
 
   function vote(id, delta) {
+      
     setJokes(allJokes =>
       allJokes.map(j => (j.id === id ? { ...j, votes: j.votes + delta } : j))
     );
+
   }
 
   /* render: either loading spinner or list of sorted jokes. */

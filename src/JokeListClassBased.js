@@ -49,14 +49,11 @@ class JokeListClassBased extends React.Component {
 
     generateNewJokes() {
         this.setState( {jokes: []});
-        console.log("Generate New Joke function!");
     }
 
     /* change vote for this id by delta (+1 or -1) */
     vote(id, delta) {
-        this.setState(allJokes =>
-        allJokes.map(j => (j.id === id ? { ...j, votes: j.votes + delta } : j))
-        );
+        this.setState({ jokes: this.state.jokes.map(j => (j.id === id ? { ...j, votes: j.votes + delta } : j))});
     }
 
     render() {
