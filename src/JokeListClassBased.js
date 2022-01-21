@@ -6,7 +6,8 @@ import "./JokeList.css";
 class JokeListClassBased extends React.Component {
     constructor() {
         super();
-        this.state = { jokes: [] };
+        // this.state = { jokes: [] };
+        this.state = { jokes: (JSON.parse(localStorage.getItem("jokes")) || []) }
         this.generateNewJokes = this.generateNewJokes.bind(this);
         this.getJokes = this.getJokes.bind(this);
         this.vote = this.vote.bind(this);
@@ -31,6 +32,7 @@ class JokeListClassBased extends React.Component {
             console.error("duplicate found!");
             }
         }
+        localStorage.setItem("jokes", JSON.stringify(j));
         this.setState({jokes: j});
         } catch (e) {
         console.log(e);
@@ -39,12 +41,15 @@ class JokeListClassBased extends React.Component {
 
     componentDidMount() {
         /* empty joke list and then call getJokes */
-        if (this.state.jokes.length === 0) this.getJokes();    
+
+        if (this.state.jokes.length === 0) this.getJokes(); 
+
     }
 
     componentDidUpdate() {
         /* empty joke list and then call getJokes */
-        if (this.state.jokes.length === 0) this.getJokes();    
+        if (this.state.jokes.length === 0) this.getJokes(); 
+        localStorage.setItem("jokes", JSON.stringify(this.state.jokes));   
     }
 
     generateNewJokes() {
@@ -72,7 +77,10 @@ class JokeListClassBased extends React.Component {
                 </div>
             );
         }
-        return null;        
+        // return null;  
+        return  (
+            <h3>Jokes are loading...</h3>
+            );      
     }
 }
 
